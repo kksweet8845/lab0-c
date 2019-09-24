@@ -141,8 +141,6 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     list_ele_t *cur = q->head;
     q->head = q->head->next;
     q->len -= 1;
-    if (sp == NULL)
-        sp = malloc(bufsize * sizeof(char));
     memset(sp, '\0', (bufsize) * sizeof(char));
     strncpy(sp, cur->value, bufsize - 1);
     if (cur->value != NULL)
