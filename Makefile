@@ -9,7 +9,7 @@ $(GIT_HOOKS):
 	@echo
 
 queue.o: queue.c queue.h harness.h
-	$(CC) $(CFLAGS) -c queue.c 
+	$(CC) $(CFLAGS) -c queue.c
 
 qtest: qtest.c report.c console.c harness.c queue.o
 	$(CC) $(CFLAGS) -o qtest qtest.c report.c console.c harness.c queue.o
@@ -27,8 +27,11 @@ valgrind: qtest valgrind_existence
 	sed -i "s/alarm/isnan/g" $(patched_file)
 	scripts/driver.py -p $(patched_file) --valgrind
 	@echo
-	@echo "Test with specific case by running command:" 
+	@echo "Test with specific case by running command:"
 	@echo "scripts/driver.py -p $(patched_file) --valgrind -t <tid>"
+
+
+
 
 clean:
 	rm -f *.o *~ qtest /tmp/qtest.*

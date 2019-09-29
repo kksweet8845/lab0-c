@@ -41,16 +41,14 @@ list_ele_t *list_new(char *s)
     list_ele_t *l = malloc(sizeof(list_ele_t));
     if (l == NULL)
         return NULL;
-    else {
-        char *ts = malloc((strlen(s) + 1) * (sizeof(char)));
-        if (ts == NULL) {
-            free(l);
-            return NULL;
-        }
-        strcpy(ts, s);
-        l->value = ts;
-        l->next = NULL;
+    char *ts = malloc((strlen(s) + 1) * (sizeof(char)));
+    if (ts == NULL) {
+        free(l);
+        return NULL;
     }
+    strcpy(ts, s);
+    l->value = ts;
+    l->next = NULL;
     return l;
 }
 
@@ -82,9 +80,10 @@ void q_free(queue_t *q)
 bool q_insert_head(queue_t *q, char *s)
 {
     list_ele_t *newh;
-    /* What should you do if the q is NULL? */
+    /* Return false if q is NULL or could not allocate space */
     if (q == NULL)
         return false;
+    /* Handling allocate space for the string and copy it */
     newh = list_new(s);
     if (newh == NULL)
         return false;
@@ -111,9 +110,12 @@ bool q_insert_tail(queue_t *q, char *s)
     /* You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
     list_ele_t *newh;
+    /*  Rturn false if q is NULL*/
     if (q == NULL)
         return false;
+    /*  Create a new list */
     newh = list_new(s);
+    /* Return false if the list is NULL */
     if (newh == NULL)
         return false;
     q->tail->next = newh;
@@ -141,7 +143,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     list_ele_t *cur = q->head;
     q->head = q->head->next;
     q->len -= 1;
+    /* Tips: fill all the char with `\0` teminator */
     memset(sp, '\0', (bufsize) * sizeof(char));
+    /* copy the first bufsize-1, then sp will already have the \0 teminator */
     strncpy(sp, cur->value, bufsize - 1);
     if (cur->value != NULL)
         free(cur->value);

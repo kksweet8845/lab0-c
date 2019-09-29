@@ -6,7 +6,7 @@ import getopt
 
 # Driver program for C programming exercise
 class Tracer:
-    
+
     traceDirectory = "./traces"
     qtest = "./qtest"
     command = qtest
@@ -130,7 +130,6 @@ def run(name, args):
     levelFixed = False
     autograde = False
     useValgrind = False
-    
 
     optlist, args = getopt.getopt(args, 'hp:t:v:A', ['valgrind'])
     for (opt, val) in optlist:

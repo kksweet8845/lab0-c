@@ -90,6 +90,7 @@ void init_cmd()
     param_list = NULL;
     err_cnt = 0;
     quit_flag = false;
+    /* add a some default cmd */
     add_cmd("help", do_help_cmd, "                | Show documentation");
     add_cmd("option", do_option_cmd,
             " [name val]     | Display or set options");
@@ -112,13 +113,21 @@ void init_cmd()
     first_time = last_time;
 }
 
-/* Add a new command */
+/* Add a new command
+   @param cmd_function bool (*cmd_function)(int, char**)*/
 void add_cmd(char *name, cmd_function operation, char *documentation)
 {
+    /* cmd_ptr which can point to a struct CELE which is a cmd struct type */
     cmd_ptr next_cmd = cmd_list;
+    /* */
     cmd_ptr *last_loc = &cmd_list;
+    /* strcmp return value >0 if the first character taht does not match has a
+     * greater value in ptr1 than ptr2 */
     while (next_cmd && strcmp(name, next_cmd->name) > 0) {
-        last_loc = &next_cmd->next;
+        /* change the cmd link-list in alphabetical order */
+        last_loc =
+            &(next_cmd->next); /* -> has higher precedence than &, it will save
+                                  the address of the pointer of next_cmd->next*/
         next_cmd = next_cmd->next;
     }
     cmd_ptr ele = (cmd_ptr) malloc_or_fail(sizeof(cmd_ele), "add_cmd");
@@ -126,6 +135,8 @@ void add_cmd(char *name, cmd_function operation, char *documentation)
     ele->operation = operation;
     ele->documentation = documentation;
     ele->next = next_cmd;
+    /* which is actually the last one the next ptr of cele in current link-list
+     */
     *last_loc = ele;
 }
 
@@ -556,6 +567,7 @@ static bool read_ready()
 
    nfds should be set to the maximum file descriptor for network sockets.
    If nfds == 0, this indicates that there is no pending network activity
+   It is a console with network (socket)
 */
 
 int cmd_select(int nfds,
@@ -593,9 +605,12 @@ int cmd_select(int nfds,
     if (nfds == 0)
         return 0;
     int result = select(nfds, readfds, writefds, exceptfds, timeout);
+    /* select return <= 0 if there is error occurred or time exceeded */
     if (result <= 0)
         return result;
     infd = buf_stack->fd;
+    /* FD_SET(fd, set)-> add a new fd to the set
+       FD_CLR(df, set)-> delete a fd from a set */
     if (readfds && FD_ISSET(infd, readfds)) {
         /* Commandline input available */
         FD_CLR(infd, readfds);

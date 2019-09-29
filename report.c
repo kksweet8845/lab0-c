@@ -17,6 +17,7 @@ FILE *errfile = NULL;
 FILE *verbfile = NULL;
 FILE *logfile = NULL;
 
+// verblevel is a external storage type.
 int verblevel = 0;
 void init_files(FILE *efile, FILE *vfile)
 {
@@ -92,7 +93,7 @@ void report_event(message_t msg, char *fmt, ...)
 
 void report(int level, char *fmt, ...)
 {
-    va_list ap;
+    va_list ap; /*multiple arguments. */
     if (!verbfile)
         init_files(stdout, stdout);
     if (level <= verblevel) {

@@ -238,8 +238,9 @@ bool error_check()
  */
 bool exception_setup(bool limit_time)
 {
+    /* Save the environemnt and save the sig mask to 1 */
     if (sigsetjmp(env, 1)) {
-        /* Got here from longjmp */
+        /* Got here from siglongjmp */
         jmp_ready = false;
         if (time_limited) {
             alarm(0);
@@ -280,6 +281,17 @@ void exception_cancel()
  */
 void trigger_exception(char *msg)
 {
+    /* siglongjmp() is a builtin function in setjmp.h header file.
+       The only thing we need to know is that it is like a backup
+       mechanism. Before calling the siglongjmp, the sigsetjmp will
+       must be called in advanced.
+       #include<setjmp.h>
+       int sigsetjmp(sigjmp_buf env, int savsigs)
+       return 0 if return directly
+       and nonzero if return from siglongjmp(sigjmp_buf env, int savsigs)
+       when the fn calls siglongjmp(env, num) it will like `goto`-like behavior
+       go back to the place where sigsetjmp written which return num return from
+       siglongjmp */
     error_occurred = true;
     error_message = msg;
     if (jmp_ready)

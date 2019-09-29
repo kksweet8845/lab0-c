@@ -482,6 +482,9 @@ bool do_show(int argc, char *argv[])
 /* Signal handlers */
 void sigsegvhandler(int sig)
 {
+    /* The signal handler which will
+       fetch the signal with invalid
+       access to storage, and trigger a exception*/
     trigger_exception(
         "Segmentation fault occurred.  You dereferenced a NULL or invalid "
         "pointer");
@@ -497,10 +500,13 @@ void sigalrmhandler(int sig)
 
 static void queue_init()
 {
+    /*Initialize the queue
+    1. The number of failure
+    2. Initialize the queue with a `NULL`.*/
     fail_count = 0;
     q = NULL;
-    signal(SIGSEGV, sigsegvhandler);
-    signal(SIGALRM, sigalrmhandler);
+    signal(SIGSEGV, sigsegvhandler); /* Invalid access to storage */
+    signal(SIGALRM, sigalrmhandler); /* Alarm clock */
 }
 
 
@@ -544,22 +550,29 @@ int main(int argc, char *argv[])
     char *logfile_name = NULL;
     int level = 4;
     int c;
-
+    /* getopt is defined in getopt_core.h
+     * It is useful to handle the option argument.
+     * It take `argc`, `argv` and `char*` which the last one is a string to let
+     * usr specify the options. That is, the qtest have four types of options.
+     * It is `h`, `v`, `f` and `l`, respectively.
+     */
     while ((c = getopt(argc, argv, "hv:f:l:")) != -1) {
         switch (c) {
         case 'h':
-            usage(argv[0]);
+            usage(argv[0]); /*which is a function to printout the pre-written
+                               mesage */
             break;
         case 'f':
-            strncpy(buf, optarg, BUFSIZE);
+            strncpy(buf, optarg, BUFSIZE); /* `optarg` defines the arguemnt
+                                              proceeded by a option */
             buf[BUFSIZE - 1] = '\0';
-            infile_name = buf;
+            infile_name = buf; /*The trace you specified.*/
             break;
         case 'v':
-            level = atoi(optarg);
+            level = atoi(optarg); /*Set the verbosity of descriptions */
             break;
         case 'l':
-            strncpy(lbuf, optarg, BUFSIZE);
+            strncpy(lbuf, optarg, BUFSIZE); /* Specify the logfile to log */
             buf[BUFSIZE - 1] = '\0';
             logfile_name = lbuf;
             break;
